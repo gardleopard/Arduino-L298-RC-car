@@ -98,20 +98,23 @@ int setSpeed(int input, int range){
 void drive(){
   if(ch1 < THROTTLECENTRE + 40 && ch1 > THROTTLECENTRE - 40){
     stop();
+    pointTurn();
   }
   if(ch1 > THROTTLECENTRE + 40){
     speedLeft = setSpeed(ch1 - THROTTLECENTRE, THROTTLEMAX-THROTTLECENTRE);
     speedRight = setSpeed(ch1 - THROTTLECENTRE, THROTTLEMAX-THROTTLECENTRE);
     forward();
+    forwardTurn();
   }
   if(ch1 < THROTTLECENTRE - 40){
     speedLeft = setSpeed(THROTTLECENTRE - ch1, THROTTLECENTRE - THROTTLEMIN);
     speedRight = setSpeed(THROTTLECENTRE - ch1, THROTTLECENTRE - THROTTLEMIN);
     reverse();
+    reverseTurn();
   }
 }
 
-void turn(){
+void forwardTurn(){
  if(ch2 > STEERINGCENTRE +40 ){
    enableMotor(leftMotor);
    coastMotor(rightMotor);
@@ -126,6 +129,40 @@ void turn(){
  }
 }
 
+void reverseTurn(){
+ if(ch2 > STEERINGCENTRE +40 ){
+   enableMotor(rightMotor);
+   coastMotor(leftMotor);
+   reverseMotor(rightMotor);
+   //forwardMotor(leftMotor);
+ } 
+ if(ch2 < STEERINGCENTRE - 40){
+   coastMotor(rightMotor);
+   enableMotor(leftMotor);
+   reverseMotor(leftMotor);
+   //forwardMotor(rightMotor);
+ }
+}
+
+void pointTurn(){
+ if(ch2 > STEERINGCENTRE +40 ){
+   speedLeft = setSpeed(ch2 - STEERINGCENTRE, STEERINGRIGHT-STEERINGCENTRE);
+   speedRight = setSpeed(ch2 - STEERINGCENTRE, STEERINGRIGHT-STEERINGCENTRE);
+   enableMotor(rightMotor);
+   enableMotor(leftMotor);
+   reverseMotor(rightMotor);
+   forwardMotor(leftMotor);
+ } 
+ if(ch2 < STEERINGCENTRE - 40){
+   speedLeft = setSpeed(STEERINGCENTRE - ch2, STEERINGCENTRE - STEERINGLEFT);
+   speedRight = setSpeed(STEERINGCENTRE - ch2, STEERINGCENTRE - STEERINGLEFT);
+   enableMotor(rightMotor);
+   enableMotor(leftMotor);
+   reverseMotor(leftMotor);
+   forwardMotor(rightMotor);
+ }
+}
+
 void loop() {
   ch1 = pulseIn(CH1,HIGH);
   ch2 = pulseIn(CH2,HIGH);
@@ -135,5 +172,5 @@ void loop() {
     delay(RESOLUTION-speedRight);
   }
   drive();
-  turn();
+  //turn();
 }
